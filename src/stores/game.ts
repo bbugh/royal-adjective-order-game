@@ -41,6 +41,8 @@ export const useGameStore = defineStore('game', () => {
     guessSlots.value[index] = value
   }
 
+  const clearGuessSlot = (index: number) => { guessSlots.value[index] = '' }
+
   const allGuessesSelected = computed(() => guessSlots.value.every((guess) => guess !== ''))
 
   const pluralNoun = computed(() => noun.value + 's')
@@ -57,6 +59,7 @@ export const useGameStore = defineStore('game', () => {
     guessSlots,
     newGame,
     pluralNoun,
-    correctAdjectives
+    correctAdjectives,
+    clearGuessSlot
   }
 })

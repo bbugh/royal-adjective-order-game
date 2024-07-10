@@ -48,10 +48,23 @@ function selectDifficulty(evt: Event) {
   store.difficulty = parseInt(target.value)
   store.newGame()
 }
+
+function setNextGuessSlot(adjective: string) {
+  const index = store.guessSlots.findIndex((slot) => slot === '')
+  if (index !== -1) {
+    store.setGuessSlot(index, adjective)
+  }
+}
 </script>
 
 <template>
   <main class="container p-5 mx-auto">
+    <h1 class="mb-5 text-4xl font-bold">👑 Royal Order of Adjectives 👑</h1>
+    <div class="p-4 mb-4 text-sm bg-gray-800">
+      Put the words in the correct English order. Click a word add it to the next empty slot, or
+      drag a word to a specific slot. Click a word in the guess area to remove it.
+    </div>
+
     <button class="p-2 mb-5 text-white bg-blue-500 rounded" @click="store.newGame">New Game</button>
 
     <div class="inline-flex flex-row gap-3 px-3 py-1 mb-5 rounded xxborder xxborder-gray-300">
@@ -90,6 +103,7 @@ function selectDifficulty(evt: Event) {
         draggable="true"
         @dragstart="startDrag($event, adjective)"
         @dragend="onDragEnd"
+        @click="setNextGuessSlot(adjective)"
       >
         {{ adjective }}
       </WordBox>
@@ -101,6 +115,7 @@ function selectDifficulty(evt: Event) {
         @drop="onDrop($event, i)"
         @dragover.prevent
         @dragenter.prevent
+        @click="store.clearGuessSlot(i)"
       >
         <div
           class="text-center bg-gray-800 border-b-2 border-gray-300 draggable-destination min-w-36"
