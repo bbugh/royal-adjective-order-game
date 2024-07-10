@@ -8,8 +8,6 @@ store.newGame()
 function startDrag(event: DragEvent, item: string) {
   if (!event.dataTransfer) return
 
-  console.log('dragging')
-
   if (!(event?.target instanceof HTMLElement)) {
     throw new Error('target is not HTMLElement')
   }
@@ -22,24 +20,17 @@ function startDrag(event: DragEvent, item: string) {
 }
 
 function onDragEnd(event: DragEvent) {
-  console.log('drag end', event?.dataTransfer?.dropEffect)
   if (!(event?.target instanceof HTMLElement)) {
     throw new Error('target is not HTMLElement')
   }
 
   event?.target?.classList.remove('dragging')
-
-  if (event?.dataTransfer?.dropEffect === 'move') {
-    const itemID = event.dataTransfer.getData('itemID')
-    console.log('dragged move', itemID)
-  }
 }
 
 function onDrop(event: DragEvent, index: number) {
   if (!event.dataTransfer) return
 
   const itemID = event.dataTransfer.getData('itemID')
-  console.log('dropped', itemID, index)
   store.setGuessSlot(index, itemID)
 }
 
