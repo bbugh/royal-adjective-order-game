@@ -51,23 +51,36 @@ function selectDifficulty(evt: Event) {
 </script>
 
 <template>
-  <main>
-    <button @click="store.newGame" class="p-2 mb-5 text-white bg-blue-500 rounded">New Game</button>
+  <main class="container p-5 mx-auto">
+    <button class="p-2 mb-5 text-white bg-blue-500 rounded" @click="store.newGame">New Game</button>
 
-    <div class="flex flex-col gap-3 mb-5">
-      Difficulty: {{ store.difficulty }}
-      <select @change="selectDifficulty($event)">
-        <option v-for="n in 8" :key="n" :selected="store.difficulty == n + 1">{{ n + 1 }}</option>
-      </select>
+    <div class="inline-flex flex-row gap-3 px-3 py-1 mb-5 rounded xxborder xxborder-gray-300">
+      <div>
+        Word count:
+        <select class="px-2 py-1 text-black rounded" @change="selectDifficulty($event)">
+          <option v-for="n in 8" :key="n" :selected="store.difficulty == n + 1">{{ n + 1 }}</option>
+        </select>
+      </div>
+
+      <div>
+        <input
+          id="showHints"
+          v-model="store.showHints"
+          class="mr-1"
+          type="checkbox"
+          name="showHints"
+        />
+        <label for="showHints">Show hints</label>
+      </div>
     </div>
 
-    <div class="flex flex-col gap-3 mb-5">
+    <!-- <div class="flex flex-col gap-3 mb-5">
       <div>adjectiveCategories: {{ store.adjectiveCategories }}</div>
       <div>guessSlots: {{ store.guessSlots }}</div>
 
       <div>correctAdjectives: {{ store.correctAdjectives }}</div>
       <div>adjectives: {{ store.adjectives }}</div>
-    </div>
+    </div> -->
 
     <div class="mb-4 text-2xl">
       <WordBox
@@ -81,27 +94,38 @@ function selectDifficulty(evt: Event) {
         {{ adjective }}
       </WordBox>
     </div>
-    <div class="flex items-center gap-2 text-2xl">
+    <div class="flex items-center gap-4 text-2xl">
       <div
         v-for="(guess, i) in store.guessSlots"
         :key="i"
-        class="text-center bg-gray-300 rounded draggable-destination min-w-16"
         @drop="onDrop($event, i)"
         @dragover.prevent
         @dragenter.prevent
       >
-        <WordBox v-if="guess">
-          <!-- @dragover="dragoverHandler" -->
-          {{ guess || '&nbsp;' }}
-        </WordBox>
-        <div v-else>&nbsp;</div>
+        <div
+          class="text-center bg-gray-800 border-b-2 border-gray-300 draggable-destination min-w-36"
+        >
+          <div v-if="guess">
+            {{ guess || '&nbsp;' }}
+          </div>
+          <div v-else>&nbsp;</div>
+        </div>
+        <div v-if="store.showHints" class="text-sm text-center text-gray-500">
+          {{ store.adjectiveCategories[i] }}
+        </div>
       </div>
 
-      {{ store.noun }}
+      {{ store.pluralNoun }}
     </div>
 
-    <div :class="['mt-5', store.guessIsCorrect ? 'text-green-500' : 'text-red-500']">
+    <div
+      v-if="store.allGuessesSelected"
+      :class="['mt-5', store.guessIsCorrect ? 'text-green-500' : 'text-red-500']"
+    >
       {{ store.guessIsCorrect ? 'Correct!' : 'Incorrect' }}
+      <button v-if="store.guessIsCorrect" class="underline" @click="store.newGame">
+        Play again
+      </button>
     </div>
   </main>
 </template>

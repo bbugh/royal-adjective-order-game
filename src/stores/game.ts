@@ -7,6 +7,7 @@ import { pickRandomElementsInOrder, pickRandomElement, shuffleArray } from '@/ut
 const allCategories = Object.keys(data.adjectives) as unknown as (keyof typeof data.adjectives)[]
 
 export const useGameStore = defineStore('game', () => {
+  const showHints = ref(false)
   const difficulty = ref(3)
 
   const noun = ref('')
@@ -38,15 +39,11 @@ export const useGameStore = defineStore('game', () => {
     guessSlots.value[index] = value
   }
 
-  // const randomNoun
+  const allGuessesSelected = computed(() => guessSlots.value.every((guess) => guess !== ''))
 
-  // const count = ref(0)
-  // const doubleCount = computed(() => count.value * 2)
-  // function increment() {
-  //   count.value++
-  // }
+  const pluralNoun = computed(() => noun.value + 's')
 
-  return { difficulty, guessIsCorrect, noun,setGuessSlot, adjectives,adjectiveCategories,
-    guessSlots, newGame,
+  return { difficulty, guessIsCorrect, noun,setGuessSlot, adjectives,adjectiveCategories, showHints, allGuessesSelected,
+    guessSlots, newGame, pluralNoun,
     correctAdjectives }
 })
