@@ -61,8 +61,11 @@ function setNextGuessSlot(adjective: string) {
   <main class="container p-5 mx-auto">
     <h1 class="mb-5 text-4xl font-bold">👑 Royal Order of Adjectives 👑</h1>
     <div class="p-4 mb-4 text-sm bg-gray-800">
-      Put the words in the correct English order. Click a word add it to the next empty slot, or
-      drag a word to a specific slot. Click a word in the guess area to remove it.
+      Put the adjectives in the
+      <a href="https://www.grammarly.com/blog/adjective-order/" target="_blank" class="underline"
+        >correct English order</a
+      >. Click a word add it to the next empty slot, or drag a word to a specific slot. Click a word
+      in the guess area to remove it and try again.
     </div>
 
     <div class="inline-flex flex-row items-center gap-4 mb-5 rounded">
