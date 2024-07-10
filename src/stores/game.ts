@@ -8,6 +8,7 @@ const allCategories = Object.keys(data.adjectives) as unknown as (keyof typeof d
 
 export const useGameStore = defineStore('game', () => {
   const showHints = ref(false)
+  const showSuccess = ref(false)
   const difficulty = ref(3)
 
   const noun = ref('')
@@ -37,18 +38,22 @@ export const useGameStore = defineStore('game', () => {
     () => guessSlots.value.join('') === correctAdjectives.value.join('')
   )
 
+  const hasGuessSlot = (index: number) => guessSlots.value[index] !== ''
   const setGuessSlot = (index: number, value: string) => {
     guessSlots.value[index] = value
   }
 
   const clearGuessSlot = (index: number) => { guessSlots.value[index] = '' }
+  const isGuessSlotCorrect = (index: number) => guessSlots.value[index] === correctAdjectives.value[index]
 
   const allGuessesSelected = computed(() => guessSlots.value.every((guess) => guess !== ''))
 
   const pluralNoun = computed(() => noun.value + 's')
 
+
   return {
     difficulty,
+    isGuessSlotCorrect,
     guessIsCorrect,
     noun,
     setGuessSlot,
@@ -61,5 +66,6 @@ export const useGameStore = defineStore('game', () => {
     pluralNoun,
     correctAdjectives,
     clearGuessSlot
+    , showSuccess, hasGuessSlot
   }
 })

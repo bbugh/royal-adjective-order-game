@@ -65,9 +65,11 @@ function setNextGuessSlot(adjective: string) {
       drag a word to a specific slot. Click a word in the guess area to remove it.
     </div>
 
-    <button class="p-2 mb-5 text-white bg-blue-500 rounded" @click="store.newGame">New Game</button>
+    <div class="inline-flex flex-row items-center gap-4 mb-5 rounded">
+      <button class="p-2 text-white bg-purple-700 rounded" @click="store.newGame">
+        👑 New Game
+      </button>
 
-    <div class="inline-flex flex-row gap-3 px-3 py-1 mb-5 rounded xxborder xxborder-gray-300">
       <div>
         Word count:
         <select class="px-2 py-1 text-black rounded" @change="selectDifficulty($event)">
@@ -83,7 +85,22 @@ function setNextGuessSlot(adjective: string) {
           type="checkbox"
           name="showHints"
         />
-        <label for="showHints">Show hints</label>
+        <label for="showHints" title="Show the correct adjective category under each guess slot.">
+          Show hints ℹ️
+        </label>
+      </div>
+
+      <div>
+        <input
+          id="showSuccess"
+          v-model="store.showSuccess"
+          class="mr-1"
+          type="checkbox"
+          name="showSuccess"
+        />
+        <label for="showSuccess" title="Highlight correct guesses in green, incorrect in red">
+          Highlight Success ℹ️
+        </label>
       </div>
     </div>
 
@@ -118,10 +135,17 @@ function setNextGuessSlot(adjective: string) {
         @click="store.clearGuessSlot(i)"
       >
         <div
-          class="text-center bg-gray-800 border-b-2 border-gray-300 draggable-destination min-w-36"
+          :class="[
+            'text-center border-b-2 border-gray-300 draggable-destination min-w-36',
+            store.showSuccess && store.hasGuessSlot(i)
+              ? store.isGuessSlotCorrect(i)
+                ? 'bg-green-800'
+                : 'bg-red-800'
+              : 'bg-gray-800'
+          ]"
         >
           <div v-if="guess">
-            {{ guess || '&nbsp;' }}
+            {{ guess }}
           </div>
           <div v-else>&nbsp;</div>
         </div>
@@ -137,7 +161,7 @@ function setNextGuessSlot(adjective: string) {
       v-if="store.allGuessesSelected"
       :class="['mt-5', store.guessIsCorrect ? 'text-green-500' : 'text-red-500']"
     >
-      {{ store.guessIsCorrect ? 'Correct!' : 'Incorrect' }}
+      {{ store.guessIsCorrect ? 'Very good, your highness!' : 'Incorrect' }}
       <button v-if="store.guessIsCorrect" class="underline" @click="store.newGame">
         Play again
       </button>
