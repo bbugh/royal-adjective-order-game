@@ -67,7 +67,9 @@ function setNextGuessSlot(adjective: string) {
       <div>
         Word count:
         <select class="px-2 py-1 text-black rounded" @change="selectDifficulty($event)">
-          <option v-for="n in 8" :key="n" :selected="store.difficulty == n + 1">{{ n + 1 }}</option>
+          <option v-for="n in 8" :key="n" :selected="store.difficulty == n + 1">
+            {{ n + 1 }}
+          </option>
         </select>
       </div>
 
@@ -119,7 +121,7 @@ function setNextGuessSlot(adjective: string) {
         {{ adjective }}
       </WordBox>
     </div>
-    <div class="flex items-center gap-4 text-2xl">
+    <div class="flex flex-wrap items-center gap-4 text-2xl">
       <div
         v-for="(guess, i) in store.guessSlots"
         :key="i"
@@ -148,7 +150,10 @@ function setNextGuessSlot(adjective: string) {
         </div>
       </div>
 
-      {{ store.pluralNoun }}
+      <div>
+        {{ store.pluralNoun }}
+        <div v-if="store.showHints" class="text-sm">&nbsp;</div>
+      </div>
     </div>
 
     <div
