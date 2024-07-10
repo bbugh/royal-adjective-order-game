@@ -33,7 +33,9 @@ export const useGameStore = defineStore('game', () => {
     guessSlots.value = Array(adjectives.value.length).fill('')
   }
 
-  const guessIsCorrect = computed(() => guessSlots.value.join('') === correctAdjectives.value.join(''))
+  const guessIsCorrect = computed(
+    () => guessSlots.value.join('') === correctAdjectives.value.join('')
+  )
 
   const setGuessSlot = (index: number, value: string) => {
     guessSlots.value[index] = value
@@ -43,7 +45,18 @@ export const useGameStore = defineStore('game', () => {
 
   const pluralNoun = computed(() => noun.value + 's')
 
-  return { difficulty, guessIsCorrect, noun,setGuessSlot, adjectives,adjectiveCategories, showHints, allGuessesSelected,
-    guessSlots, newGame, pluralNoun,
-    correctAdjectives }
+  return {
+    difficulty,
+    guessIsCorrect,
+    noun,
+    setGuessSlot,
+    adjectives,
+    adjectiveCategories,
+    showHints,
+    allGuessesSelected,
+    guessSlots,
+    newGame,
+    pluralNoun,
+    correctAdjectives
+  }
 })
