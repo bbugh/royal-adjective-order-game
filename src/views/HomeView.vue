@@ -1,49 +1,49 @@
 <script setup lang="ts">
-import WordBox from '@/components/WordBox.vue'
-import { useGameStore } from '@/stores/game'
+import WordBox from "@/components/WordBox.vue";
+import { useGameStore } from "@/stores/game";
 
-const store = useGameStore()
-store.newGame()
+const store = useGameStore();
+store.newGame();
 
 function startDrag(event: DragEvent, item: string) {
-  if (!event.dataTransfer) return
+  if (!event.dataTransfer) return;
 
   if (!(event?.target instanceof HTMLElement)) {
-    throw new Error('target is not HTMLElement')
+    throw new Error("target is not HTMLElement");
   }
 
-  event?.target?.classList.add('dragging')
+  event?.target?.classList.add("dragging");
 
-  event.dataTransfer.dropEffect = 'move'
-  event.dataTransfer.effectAllowed = 'move'
-  event.dataTransfer.setData('itemID', item)
+  event.dataTransfer.dropEffect = "move";
+  event.dataTransfer.effectAllowed = "move";
+  event.dataTransfer.setData("itemID", item);
 }
 
 function onDragEnd(event: DragEvent) {
   if (!(event?.target instanceof HTMLElement)) {
-    throw new Error('target is not HTMLElement')
+    throw new Error("target is not HTMLElement");
   }
 
-  event?.target?.classList.remove('dragging')
+  event?.target?.classList.remove("dragging");
 }
 
 function onDrop(event: DragEvent, index: number) {
-  if (!event.dataTransfer) return
+  if (!event.dataTransfer) return;
 
-  const itemID = event.dataTransfer.getData('itemID')
-  store.setGuessSlot(index, itemID)
+  const itemID = event.dataTransfer.getData("itemID");
+  store.setGuessSlot(index, itemID);
 }
 
 function selectDifficulty(evt: Event) {
-  const target = evt.target as HTMLSelectElement
-  store.difficulty = parseInt(target.value)
-  store.newGame()
+  const target = evt.target as HTMLSelectElement;
+  store.difficulty = parseInt(target.value);
+  store.newGame();
 }
 
 function setNextGuessSlot(adjective: string) {
-  const index = store.guessSlots.findIndex((slot) => slot === '')
+  const index = store.guessSlots.findIndex((slot) => slot === "");
   if (index !== -1) {
-    store.setGuessSlot(index, adjective)
+    store.setGuessSlot(index, adjective);
   }
 }
 </script>
@@ -52,20 +52,29 @@ function setNextGuessSlot(adjective: string) {
   <main class="container mx-auto">
     <div class="p-4 mb-4 text-sm bg-gray-800">
       Put the adjectives in the
-      <a href="https://www.grammarly.com/blog/adjective-order/" target="_blank" class="underline"
+      <a
+        href="https://www.grammarly.com/blog/adjective-order/"
+        target="_blank"
+        class="underline"
         >correct English order</a
-      >. Click a word add it to the next empty slot, or drag a word to a specific slot. Click a word
-      in the guess area to remove it and try again.
+      >. Click a word add it to the next empty slot, or drag a word to a
+      specific slot. Click a word in the guess area to remove it and try again.
     </div>
 
     <div class="inline-flex flex-row items-center gap-4 mb-5 rounded">
-      <button class="p-2 text-white bg-purple-700 rounded" @click="store.newGame">
+      <button
+        class="p-2 text-white bg-purple-700 rounded"
+        @click="store.newGame"
+      >
         👑 New Phrase
       </button>
 
       <div>
         Word count:
-        <select class="px-2 py-1 text-black rounded" @change="selectDifficulty($event)">
+        <select
+          class="px-2 py-1 text-black rounded"
+          @change="selectDifficulty($event)"
+        >
           <option v-for="n in 8" :key="n" :selected="store.difficulty == n + 1">
             {{ n + 1 }}
           </option>
@@ -80,7 +89,10 @@ function setNextGuessSlot(adjective: string) {
           type="checkbox"
           name="showHints"
         />
-        <label for="showHints" title="Show the correct adjective category under each guess slot.">
+        <label
+          for="showHints"
+          title="Show the correct adjective category under each guess slot."
+        >
           Show hints ℹ️
         </label>
       </div>
@@ -93,7 +105,10 @@ function setNextGuessSlot(adjective: string) {
           type="checkbox"
           name="showSuccess"
         />
-        <label for="showSuccess" title="Highlight correct guesses in green, incorrect in red">
+        <label
+          for="showSuccess"
+          title="Highlight correct guesses in green, incorrect in red"
+        >
           Highlight Matches ℹ️
         </label>
       </div>
@@ -111,7 +126,10 @@ function setNextGuessSlot(adjective: string) {
       <WordBox
         v-for="adjective in store.adjectives"
         :key="adjective"
-        :class="['me-2', store.guessSlots.includes(adjective) ? 'invisible' : '']"
+        :class="[
+          'me-2',
+          store.guessSlots.includes(adjective) ? 'invisible' : '',
+        ]"
         draggable="true"
         @dragstart="startDrag($event, adjective)"
         @dragend="onDragEnd"
@@ -136,7 +154,7 @@ function setNextGuessSlot(adjective: string) {
               ? store.isGuessSlotCorrect(i)
                 ? 'bg-green-800'
                 : 'bg-red-800'
-              : 'bg-gray-800'
+              : 'bg-gray-800',
           ]"
         >
           <template v-if="guess">
@@ -150,17 +168,24 @@ function setNextGuessSlot(adjective: string) {
       </div>
 
       <div>
-        {{ store.pluralNoun }}
+        {{ store.noun }}
         <div v-if="store.showHints" class="text-sm">&nbsp;</div>
       </div>
     </div>
 
     <div
       v-if="store.allGuessesSelected"
-      :class="['mt-5', store.guessIsCorrect ? 'text-green-500' : 'text-red-500']"
+      :class="[
+        'mt-5',
+        store.guessIsCorrect ? 'text-green-500' : 'text-red-500',
+      ]"
     >
-      {{ store.guessIsCorrect ? 'Very good, your highness!' : 'Incorrect' }}
-      <button v-if="store.guessIsCorrect" class="underline" @click="store.newGame">
+      {{ store.guessIsCorrect ? "Very good, your highness!" : "Incorrect" }}
+      <button
+        v-if="store.guessIsCorrect"
+        class="underline"
+        @click="store.newGame"
+      >
         Play again
       </button>
     </div>
