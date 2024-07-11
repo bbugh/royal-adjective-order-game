@@ -49,8 +49,7 @@ function setNextGuessSlot(adjective: string) {
 </script>
 
 <template>
-  <main class="container p-5 mx-auto">
-    <h1 class="mb-5 text-4xl font-bold">👑 Royal Order of Adjectives 👑</h1>
+  <main class="container mx-auto">
     <div class="p-4 mb-4 text-sm bg-gray-800">
       Put the adjectives in the
       <a href="https://www.grammarly.com/blog/adjective-order/" target="_blank" class="underline"
@@ -61,7 +60,7 @@ function setNextGuessSlot(adjective: string) {
 
     <div class="inline-flex flex-row items-center gap-4 mb-5 rounded">
       <button class="p-2 text-white bg-purple-700 rounded" @click="store.newGame">
-        👑 New Game
+        👑 New Phrase
       </button>
 
       <div>
@@ -95,7 +94,7 @@ function setNextGuessSlot(adjective: string) {
           name="showSuccess"
         />
         <label for="showSuccess" title="Highlight correct guesses in green, incorrect in red">
-          Highlight Success ℹ️
+          Highlight Matches ℹ️
         </label>
       </div>
     </div>
@@ -140,10 +139,10 @@ function setNextGuessSlot(adjective: string) {
               : 'bg-gray-800'
           ]"
         >
-          <div v-if="guess">
+          <template v-if="guess">
             {{ guess }}
-          </div>
-          <div v-else>&nbsp;</div>
+          </template>
+          <template v-else>&nbsp;</template>
         </div>
         <div v-if="store.showHints" class="text-sm text-center text-gray-500">
           {{ store.adjectiveCategories[i] }}
