@@ -7,8 +7,8 @@ import { pickRandomElementsInOrder, pickRandomElement, shuffleArray } from '@/ut
 const allCategories = Object.keys(data.adjectives) as unknown as (keyof typeof data.adjectives)[]
 
 export const useGameStore = defineStore('game', () => {
-  const showHints = ref(false)
-  const showSuccess = ref(false)
+  const showHints = ref(true)
+  const showSuccess = ref(true)
   const difficulty = ref(3)
 
   const noun = ref('')
