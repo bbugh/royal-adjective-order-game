@@ -8,7 +8,7 @@ import { RouterLink } from 'vue-router'
     <p>
       This is a simple game based on the
       <a class="underline" href="https://www.grammarly.com/blog/adjective-order/" target="_blank"
-        >weird rules of English grammar
+        >adjective order rules of English grammar
       </a>
       that come naturally to native English speakers but are a huge challenge for everyone else.
     </p>
