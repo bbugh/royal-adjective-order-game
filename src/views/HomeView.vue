@@ -59,6 +59,11 @@ function setNextGuessSlot(adjective: string) {
         >correct English order</a
       >. Click a word add it to the next empty slot, or drag a word to a
       specific slot. Click a word in the guess area to remove it and try again.
+
+      <div class="mt-2 text-xs text-gray-400">
+        Hint: You can make the game more challenging by increasing the word
+        count or turning off "Show hints" and/or "Highlight Matches".
+      </div>
     </div>
 
     <div class="inline-flex flex-row items-center gap-4 mb-5 rounded">
