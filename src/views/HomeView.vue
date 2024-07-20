@@ -183,7 +183,17 @@ function setNextGuessSlot(adjective: string) {
     </div>
 
     <div v-if="store.allGuessesSelected" class="mt-5">
-      <div v-if="!store.guessIsCorrect" class="text-red-500">Incorrect!</div>
+      <div v-if="!store.guessIsCorrect" class="text-red-500">
+        Incorrect!
+        <span
+          v-if="store.wordCount < 7 && !store.showHints && !store.showSuccess"
+        >
+          The correct order is:
+          <span v-for="(adj, i) in store.adjectiveCategories" :key="i">
+            {{ adj }}{{ i < store.correctAdjectives.length - 1 ? ", " : "" }}
+          </span>
+        </span>
+      </div>
 
       <div v-else class="text-green-500">
         {{ store.guessIsCorrect ? "Very good, your highness!" : "Incorrect" }}
