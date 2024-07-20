@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import WordBox from "@/components/WordBox.vue";
-import { useGameStore } from "@/stores/game";
-import { computed, ref, watch } from "vue";
+import { difficultyLevels, useGameStore } from "@/stores/game";
 
 const store = useGameStore();
 store.newGame();
@@ -35,9 +34,9 @@ function onDrop(event: DragEvent, index: number) {
   store.setGuessSlot(index, itemID);
 }
 
-function selectDifficulty(evt: Event) {
+function onWordCountChange(evt: Event) {
   const target = evt.target as HTMLSelectElement;
-  store.difficulty = parseInt(target.value);
+  store.wordCount = parseInt(target.value);
   store.newGame();
 }
 
@@ -46,53 +45,6 @@ function setNextGuessSlot(adjective: string) {
   if (index !== -1) {
     store.setGuessSlot(index, adjective);
   }
-}
-
-const difficultyLevels = [
-  { words: 2, hints: true, matches: true },
-  { words: 3, hints: true, matches: true },
-
-  { words: 4, hints: true, matches: true },
-  { words: 4, hints: false, matches: true },
-  { words: 4, hints: false, matches: false },
-
-  { words: 5, hints: true, matches: true },
-  { words: 5, hints: false, matches: true },
-  { words: 5, hints: false, matches: false },
-
-  { words: 6, hints: true, matches: true },
-  { words: 6, hints: false, matches: true },
-  { words: 6, hints: false, matches: false },
-
-  { words: 7, hints: false, matches: false },
-  { words: 8, hints: false, matches: false },
-  { words: 9, hints: false, matches: false },
-];
-
-const difficultyLevel = ref<number>(1);
-
-const isCustomDifficulty = computed(() => difficultyLevel.value === -1);
-
-watch(difficultyLevel, (value, oldValue) => {
-  if (value === oldValue) return;
-
-  if (value !== -1) {
-    updateDifficultyLevel();
-  }
-});
-
-function updateDifficultyLevel() {
-  store.difficulty = difficultyLevels[difficultyLevel.value].words;
-  store.showHints = difficultyLevels[difficultyLevel.value].hints;
-  store.showSuccess = difficultyLevels[difficultyLevel.value].matches;
-  store.newGame();
-}
-
-function increaseDifficultyLevel() {
-  difficultyLevel.value = Math.min(
-    difficultyLevel.value + 1,
-    difficultyLevels.length - 1,
-  );
 }
 </script>
 
@@ -118,7 +70,10 @@ function increaseDifficultyLevel() {
       </button>
 
       <div>
-        <select v-model="difficultyLevel" class="px-2 py-1 text-black rounded">
+        <select
+          v-model="store.difficultyLevel"
+          class="px-2 py-1 text-black rounded"
+        >
           <option v-for="(level, i) in difficultyLevels" :key="i" :value="i">
             Level {{ i }}
           </option>
@@ -126,20 +81,20 @@ function increaseDifficultyLevel() {
         </select>
       </div>
 
-      <div v-if="isCustomDifficulty">
+      <div v-if="store.isCustomDifficulty">
         Word count:
         <select
           class="px-2 py-1 text-black rounded"
-          @change="selectDifficulty($event)"
+          @change="onWordCountChange($event)"
         >
-          <option v-for="n in 8" :key="n" :selected="store.difficulty == n + 1">
+          <option v-for="n in 8" :key="n" :selected="store.wordCount == n + 1">
             {{ n + 1 }}
           </option>
         </select>
       </div>
-      <div v-else>Word count: {{ store.difficulty }}</div>
+      <div v-else>Word count: {{ store.wordCount }}</div>
 
-      <div v-if="isCustomDifficulty">
+      <div v-if="store.isCustomDifficulty">
         <input
           id="showHints"
           v-model="store.showHints"
@@ -156,7 +111,7 @@ function increaseDifficultyLevel() {
       </div>
       <div v-else>{{ store.showHints ? "Showing Hints" : "No Hints" }}</div>
 
-      <div v-if="isCustomDifficulty">
+      <div v-if="store.isCustomDifficulty">
         <input
           id="showSuccess"
           v-model="store.showSuccess"
@@ -246,8 +201,8 @@ function increaseDifficultyLevel() {
               @click="store.newGame"
             >
               👑 Play
-              <span v-if="!isCustomDifficulty"
-                >level {{ difficultyLevel }}</span
+              <span v-if="!store.isCustomDifficulty"
+                >level {{ store.difficultyLevel }}</span
               >
               again
             </button>
@@ -258,9 +213,9 @@ function increaseDifficultyLevel() {
             <button
               v-if="store.guessIsCorrect"
               class="p-2 text-white bg-red-700 rounded"
-              @click="increaseDifficultyLevel()"
+              @click="store.increaseDifficultyLevel()"
             >
-              💀 Try level {{ difficultyLevel + 1 }}
+              💀 Try level {{ store.difficultyLevel + 1 }}
             </button>
           </span>
         </div>
