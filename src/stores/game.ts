@@ -18,6 +18,8 @@ export const useGameStore = defineStore("game", () => {
   const adjectiveCategories = ref<string[]>([]);
   const adjectives = ref<string[]>([]);
 
+  const isHighestDifficulty = computed(() => difficulty.value === 9 && !showHints.value && !showSuccess.value);
+
   const newGame = () => {
     // const categories = ref([])
     // categories.value = pickRandomElementsInOrder(allCategories, difficulty.value)
@@ -67,5 +69,6 @@ export const useGameStore = defineStore("game", () => {
     clearGuessSlot,
     showSuccess,
     hasGuessSlot,
+    isHighestDifficulty,
   };
 });

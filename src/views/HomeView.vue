@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import WordBox from "@/components/WordBox.vue";
 import { useGameStore } from "@/stores/game";
+import { computed, ref, watch } from "vue";
 
 const store = useGameStore();
 store.newGame();
@@ -46,6 +47,53 @@ function setNextGuessSlot(adjective: string) {
     store.setGuessSlot(index, adjective);
   }
 }
+
+const difficultyLevels = [
+  { words: 2, hints: true, matches: true },
+  { words: 3, hints: true, matches: true },
+
+  { words: 4, hints: true, matches: true },
+  { words: 4, hints: false, matches: true },
+  { words: 4, hints: false, matches: false },
+
+  { words: 5, hints: true, matches: true },
+  { words: 5, hints: false, matches: true },
+  { words: 5, hints: false, matches: false },
+
+  { words: 6, hints: true, matches: true },
+  { words: 6, hints: false, matches: true },
+  { words: 6, hints: false, matches: false },
+
+  { words: 7, hints: false, matches: false },
+  { words: 8, hints: false, matches: false },
+  { words: 9, hints: false, matches: false },
+];
+
+const difficultyLevel = ref<number>(1);
+
+const isCustomDifficulty = computed(() => difficultyLevel.value === -1);
+
+watch(difficultyLevel, (value, oldValue) => {
+  if (value === oldValue) return;
+
+  if (value !== -1) {
+    updateDifficultyLevel();
+  }
+});
+
+function updateDifficultyLevel() {
+  store.difficulty = difficultyLevels[difficultyLevel.value].words;
+  store.showHints = difficultyLevels[difficultyLevel.value].hints;
+  store.showSuccess = difficultyLevels[difficultyLevel.value].matches;
+  store.newGame();
+}
+
+function increaseDifficultyLevel() {
+  difficultyLevel.value = Math.min(
+    difficultyLevel.value + 1,
+    difficultyLevels.length - 1,
+  );
+}
 </script>
 
 <template>
@@ -59,11 +107,6 @@ function setNextGuessSlot(adjective: string) {
         >correct English order</a
       >. Click a word add it to the next empty slot, or drag a word to a
       specific slot. Click a word in the guess area to remove it and try again.
-
-      <div class="mt-2 text-xs text-gray-400">
-        Hint: You can make the game more challenging by increasing the word
-        count or turning off "Show hints" and/or "Highlight Matches".
-      </div>
     </div>
 
     <div class="inline-flex flex-row items-center gap-4 mb-5 rounded">
@@ -75,6 +118,15 @@ function setNextGuessSlot(adjective: string) {
       </button>
 
       <div>
+        <select v-model="difficultyLevel" class="px-2 py-1 text-black rounded">
+          <option v-for="(level, i) in difficultyLevels" :key="i" :value="i">
+            Level {{ i }}
+          </option>
+          <option :value="-1">Custom</option>
+        </select>
+      </div>
+
+      <div v-if="isCustomDifficulty">
         Word count:
         <select
           class="px-2 py-1 text-black rounded"
@@ -85,8 +137,9 @@ function setNextGuessSlot(adjective: string) {
           </option>
         </select>
       </div>
+      <div v-else>Word count: {{ store.difficulty }}</div>
 
-      <div>
+      <div v-if="isCustomDifficulty">
         <input
           id="showHints"
           v-model="store.showHints"
@@ -101,8 +154,9 @@ function setNextGuessSlot(adjective: string) {
           Show hints ℹ️
         </label>
       </div>
+      <div v-else>{{ store.showHints ? "Showing Hints" : "No Hints" }}</div>
 
-      <div>
+      <div v-if="isCustomDifficulty">
         <input
           id="showSuccess"
           v-model="store.showSuccess"
@@ -117,15 +171,10 @@ function setNextGuessSlot(adjective: string) {
           Highlight Matches ℹ️
         </label>
       </div>
+      <div v-else>
+        {{ store.showSuccess ? "Showing Matches" : "No Matches" }}
+      </div>
     </div>
-
-    <!-- <div class="flex flex-col gap-3 mb-5">
-      <div>adjectiveCategories: {{ store.adjectiveCategories }}</div>
-      <div>guessSlots: {{ store.guessSlots }}</div>
-
-      <div>correctAdjectives: {{ store.correctAdjectives }}</div>
-      <div>adjectives: {{ store.adjectives }}</div>
-    </div> -->
 
     <div class="mb-4 text-2xl">
       <WordBox
@@ -178,21 +227,44 @@ function setNextGuessSlot(adjective: string) {
       </div>
     </div>
 
-    <div
-      v-if="store.allGuessesSelected"
-      :class="[
-        'mt-5',
-        store.guessIsCorrect ? 'text-green-500' : 'text-red-500',
-      ]"
-    >
-      {{ store.guessIsCorrect ? "Very good, your highness!" : "Incorrect" }}
-      <button
-        v-if="store.guessIsCorrect"
-        class="underline"
-        @click="store.newGame"
-      >
-        Play again
-      </button>
+    <div v-if="store.allGuessesSelected" class="mt-5">
+      <div v-if="!store.guessIsCorrect" class="text-red-500">Incorrect!</div>
+
+      <div v-else class="text-green-500">
+        {{ store.guessIsCorrect ? "Very good, your highness!" : "Incorrect" }}
+
+        <span v-if="store.isHighestDifficulty">
+          You won on the maximum difficulty level! 🎉 You're a real royal
+          wordsmith!
+        </span>
+
+        <div class="mt-4">
+          <span>
+            <button
+              v-if="store.guessIsCorrect"
+              class="p-2 text-white bg-purple-700 rounded"
+              @click="store.newGame"
+            >
+              👑 Play
+              <span v-if="!isCustomDifficulty"
+                >level {{ difficultyLevel }}</span
+              >
+              again
+            </button>
+          </span>
+
+          <span v-if="!store.isHighestDifficulty">
+            or
+            <button
+              v-if="store.guessIsCorrect"
+              class="p-2 text-white bg-red-700 rounded"
+              @click="increaseDifficultyLevel()"
+            >
+              💀 Try level {{ difficultyLevel + 1 }}
+            </button>
+          </span>
+        </div>
+      </div>
     </div>
   </main>
 </template>
